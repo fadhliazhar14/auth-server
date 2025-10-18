@@ -9,6 +9,7 @@ import com.fadhli.auth_server.entity.User;
 import com.fadhli.auth_server.exception.ResourceNotFoundException;
 import com.fadhli.auth_server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +30,11 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    
+    @Value("${jwt.expiration}")
+    private Long expiration;
 
+    @Transactional
     public AccessTokenResponse authenticate(SigninRequestDto signinRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -39,12 +45,13 @@ public class AuthService {
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
         String jwt = jwtService.generateToken(userPrincipal);
 
+        // Calculate expiration time manually to avoid verification issue
+        long accessTokenExpiredAt = System.currentTimeMillis() / 1000 + (expiration / 1000);  // expiration is in milliseconds
 
         User user = userRepository.findByUsername(signinRequest.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         String refreshToken = refreshTokenService.generateRefreshToken(user.getId());
-        long accessTokenExpiredAt = jwtService.extractExpiration(jwt).getTime() / 1000;
 
         return new AccessTokenResponse(
                 jwt,
@@ -61,8 +68,6 @@ public class AuthService {
                         signupRequest.getEmail(),
                         null
                 );
-
-        User newUser = new User();
 
         signupRequest.setPasswordHash(passwordEncoder.encode(signupRequest.getPasswordHash()));
         User createdUser = userRepository.save(userMapper.registerFromDto(signupRequest, new User()));

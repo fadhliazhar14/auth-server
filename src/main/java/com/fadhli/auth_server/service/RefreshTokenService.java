@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -66,6 +65,7 @@ public class RefreshTokenService {
         }
     }
 
+    @Transactional
     private RefreshToken rotateRefreshToken(RefreshToken oldToken) {
         oldToken.setToken(UUID.randomUUID().toString());
         oldToken.setExpiresAt(Instant.now().plusMillis(refreshTokenExpirationInMilis));
