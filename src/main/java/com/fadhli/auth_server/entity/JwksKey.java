@@ -33,13 +33,13 @@ public class JwksKey {
     @Column
     private String key_usage;
 
-    @Column(name = "public_key_n", nullable = false)
+    @Column(name = "public_key_n", nullable = false, columnDefinition = "TEXT")
     private String publicKeyN;
 
-    @Column(name = "public_key_e", nullable = false)
+    @Column(name = "public_key_e", nullable = false, columnDefinition = "TEXT")
     private String publicKeyE;
 
-    @Column(name = "private_key_pem", nullable = false)
+    @Column(name = "private_key_pem", nullable = false, columnDefinition = "TEXT")
     private String privateKeyPem;
 
     @Column(name = "is_active")
