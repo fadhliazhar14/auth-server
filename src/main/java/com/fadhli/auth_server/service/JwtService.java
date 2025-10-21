@@ -10,22 +10,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class JwtService {
     private final JwksService jwksService;
+
+    @Value("${token.issuer}")
+    private String tokenIssuer;
 
     @Value("${jwt.expiration}")
     private Long expiration;
@@ -42,6 +45,10 @@ public class JwtService {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(auth -> auth.replace("ROLE_", "")) // tanpa prefix di JWT
+                .collect(Collectors.toList()));
 
         return createToken(claims, userDetails.getUsername());
     }
@@ -53,6 +60,7 @@ public class JwtService {
         return Jwts.builder()
                 .setHeaderParam("kid", jwksKey.getKid())
                 .setClaims(claims)
+                .setIssuer(tokenIssuer)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
@@ -104,6 +112,7 @@ public class JwtService {
                 return null;
             }
         }
+
         return null;
     }
 
