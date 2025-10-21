@@ -5,12 +5,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 @Component
 @RequiredArgsConstructor
 public class KeyRotationScheduler {
     private final JwksService jwksService;
 
-    @Scheduled(fixedRate = 30L * 24 * 60 * 60 * 1000)
+    @Scheduled(
+            fixedRateString = "${key.rotation.rate:2592000000}",
+            initialDelayString = "${key.rotation.delay:2592000000}"
+    )
     public void rotateKeys() {
         jwksService.addNewJwksKey();
     }

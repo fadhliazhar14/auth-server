@@ -45,15 +45,11 @@ public class JwtService {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .map(auth -> auth.replace("ROLE_", "")) // tanpa prefix di JWT
-                .collect(Collectors.toList()));
 
-        return createToken(claims, userDetails.getUsername());
+        return createToken(claims, userDetails.getUsername(), userDetails.getAuthorities().toString());
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    private String createToken(Map<String, Object> claims, String subject, String roles) {
         JwksKey jwksKey = jwksService.findActiveJwksKey();
         PrivateKey signingKey = jwksService.findActivePrivateKey();
 
@@ -62,6 +58,7 @@ public class JwtService {
                 .setClaims(claims)
                 .setIssuer(tokenIssuer)
                 .setSubject(subject)
+                .claim("roles", roles)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(signingKey, SignatureAlgorithm.RS256)
