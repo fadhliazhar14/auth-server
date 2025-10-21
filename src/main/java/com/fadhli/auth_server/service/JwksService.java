@@ -24,7 +24,6 @@ public class JwksService {
     private final JwksKeyRepository jwksKeyRepository;
 
     public JwksKey findActiveJwksKey() {
-        // First, try to find an active key with valid expiry
         Optional<JwksKey> activeKey = jwksKeyRepository.findActiveJwksKeyWithValidExpiry();
 
         return activeKey.orElseGet(this::addNewJwksKey);
