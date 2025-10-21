@@ -17,21 +17,21 @@ public class JwkResponseDto {
     @AllArgsConstructor
     public static class JwkKey {
         @JsonProperty("kty")
-        private String keyType;
+        private String kty;
 
         @JsonProperty("use")
-        private String publicKeyUse;
+        private String key_usage;
 
         @JsonProperty("kid")
-        private String keyId;
+        private String kid;
 
         @JsonProperty("n")
-        private String modulus;
+        private String publicKeyN;
 
         @JsonProperty("e")
-        private String exponent;
+        private String publicKeyE;
 
         @JsonProperty("alg")
-        private String algorithm;
+        private String alg;
     }
 }
