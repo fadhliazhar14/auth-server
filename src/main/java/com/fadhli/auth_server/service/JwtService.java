@@ -10,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +17,6 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -65,7 +62,7 @@ public class JwtService {
                 .compact();
     }
 
-    public String extractUserName(String token) {
+    public String extractUserame(String token) {
         // extract the username from jwt token
         return extractClaim(token, Claims::getSubject);
     }
@@ -114,7 +111,7 @@ public class JwtService {
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
-        final String userName = extractUserName(token);
+        final String userName = extractUserame(token);
 
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
