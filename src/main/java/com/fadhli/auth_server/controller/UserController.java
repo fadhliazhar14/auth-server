@@ -1,6 +1,8 @@
 package com.fadhli.auth_server.controller;
 
 import com.fadhli.auth_server.constant.ResponseMessages;
+import com.fadhli.auth_server.dto.common.PageRequestDto;
+import com.fadhli.auth_server.dto.common.PageResponseDto;
 import com.fadhli.auth_server.dto.user.UserRequestDto;
 import com.fadhli.auth_server.dto.user.UserResponseDto;
 import com.fadhli.auth_server.dto.user_role.UserRoleRequestDto;
@@ -28,9 +30,17 @@ public class UserController {
     private final UserRoleService userRoleService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<UserResponseDto>>> getAll() {
-        List<UserResponseDto> users = userService.findAll();
-        ApiResponse<List<UserResponseDto>> response = ApiResponse.success(ResponseMessages.SUCCESS, users);
+    public ResponseEntity<ApiResponse<PageResponseDto<UserResponseDto>>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(required = false) String search
+    ) {
+        PageRequestDto pageRequest = new PageRequestDto(page, size, sort, direction, search);
+
+        PageResponseDto<UserResponseDto> users = userService.findAll(pageRequest);
+        ApiResponse<PageResponseDto<UserResponseDto>> response = ApiResponse.success(ResponseMessages.SUCCESS, users);
 
         return ResponseEntity.ok(response);
     }

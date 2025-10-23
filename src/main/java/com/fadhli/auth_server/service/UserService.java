@@ -1,13 +1,18 @@
 package com.fadhli.auth_server.service;
 
 import com.fadhli.auth_server.constant.ResponseMessages;
+import com.fadhli.auth_server.dto.common.PageRequestDto;
+import com.fadhli.auth_server.dto.common.PageResponseDto;
 import com.fadhli.auth_server.dto.user.UserMapper;
 import com.fadhli.auth_server.dto.user.UserRequestDto;
 import com.fadhli.auth_server.dto.user.UserResponseDto;
 import com.fadhli.auth_server.entity.User;
 import com.fadhli.auth_server.exception.ResourceNotFoundException;
 import com.fadhli.auth_server.repository.UserRepository;
+import com.fadhli.auth_server.util.PageUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +24,14 @@ public class UserService {
     private final UserMapper userMapper;
     private final UserValidationService userValidationService;
 
-    public List<UserResponseDto> findAll() {
-        return userMapper.toDtoList(userRepository.findAll());
+    public PageResponseDto<UserResponseDto> findAll(PageRequestDto pageRequest) {
+        Pageable pageable = PageUtil.createPageable(pageRequest);
+        Page<User> userPage = userRepository.findAllWithPagination(pageRequest.getSearch(), pageable);
+        List<UserResponseDto> userDto = userPage.stream()
+                .map(userMapper::toDto)
+                .toList();
+
+        return PageUtil.createPageResponse(userDto, pageable, userPage.getTotalElements());
     }
 
     public UserResponseDto findById(Long id) {

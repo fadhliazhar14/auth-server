@@ -2,9 +2,11 @@ package com.fadhli.auth_server.dto.common;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class PageRequestDto {
     @Min(value = 0, message = "Page number must be non-negative")
     private int page = 0;
