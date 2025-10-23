@@ -1,6 +1,8 @@
 package com.fadhli.auth_server.controller;
 
 import com.fadhli.auth_server.constant.ResponseMessages;
+import com.fadhli.auth_server.dto.common.PageRequestDto;
+import com.fadhli.auth_server.dto.common.PageResponseDto;
 import com.fadhli.auth_server.dto.role.RoleRequestDto;
 import com.fadhli.auth_server.dto.role.RoleResponseDto;
 import com.fadhli.auth_server.entity.Role;
@@ -23,9 +25,16 @@ public class RoleController {
     private final RoleService roleService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<RoleResponseDto>>> getAll() {
-        List<RoleResponseDto> roles = roleService.findAll();
-        ApiResponse<List<RoleResponseDto>> response = ApiResponse.success(ResponseMessages.SUCCESS, roles);
+    public ResponseEntity<ApiResponse<PageResponseDto<RoleResponseDto>>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(required = false) String search
+    ) {
+        PageRequestDto pageRequest = new PageRequestDto(page, size, sort, direction, search);
+        PageResponseDto<RoleResponseDto> roles = roleService.findAll(pageRequest);
+        ApiResponse<PageResponseDto<RoleResponseDto>> response = ApiResponse.success(ResponseMessages.SUCCESS, roles);
 
         return ResponseEntity.ok(response);
     }
