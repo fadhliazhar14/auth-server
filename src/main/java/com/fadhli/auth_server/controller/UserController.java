@@ -38,7 +38,6 @@ public class UserController {
             @RequestParam(required = false) String search
     ) {
         PageRequestDto pageRequest = new PageRequestDto(page, size, sort, direction, search);
-
         PageResponseDto<UserResponseDto> users = userService.findAll(pageRequest);
         ApiResponse<PageResponseDto<UserResponseDto>> response = ApiResponse.success(ResponseMessages.SUCCESS, users);
 
