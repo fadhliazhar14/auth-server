@@ -22,21 +22,6 @@ public class PageUtil {
         return PageRequest.of(pageRequestDto.getPage(), pageRequestDto.getSize(), sort);
     }
 
-    public static <T> PageResponseDto<T> createPageResponse(Page<T> page, PageRequestDto pageRequestDto) {
-        return PageResponseDto.of(
-                page.getContent(),
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.isFirst(),
-                page.isLast(),
-                page.isEmpty(),
-                pageRequestDto.getSort(),
-                pageRequestDto.getDirection()
-        );
-    }
-
     public static <T> PageResponseDto<T> createPageResponse(List<T> content, Pageable pageable, long totalElements) {
         int totalPages = (int) Math.ceil((double) totalElements / pageable.getPageSize());
         boolean isFirst = pageable.getPageNumber() == 0;
