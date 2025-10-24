@@ -5,6 +5,7 @@ import com.fadhli.auth_server.dto.common.PageRequestDto;
 import com.fadhli.auth_server.dto.common.PageResponseDto;
 import com.fadhli.auth_server.dto.user.UserRequestDto;
 import com.fadhli.auth_server.dto.user.UserResponseDto;
+import com.fadhli.auth_server.dto.user.UserUpdateRequestDto;
 import com.fadhli.auth_server.dto.user_role.UserRoleRequestDto;
 import com.fadhli.auth_server.dto.user_role.UserRoleResponseDto;
 import com.fadhli.auth_server.service.UserRoleService;
@@ -69,7 +70,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<UserResponseDto>> update(
             @PathVariable Long id,
-            @Valid @RequestBody UserRequestDto userRequest) {
+            @Valid @RequestBody UserUpdateRequestDto userRequest) {
         UserResponseDto users = userService.edit(id, userRequest);
         ApiResponse<UserResponseDto> response = ApiResponse.success(ResponseMessages.updated("User"), users);
 

@@ -1,5 +1,6 @@
 package com.fadhli.auth_server.service;
 
+import com.fadhli.auth_server.constant.ResponseMessages;
 import com.fadhli.auth_server.dto.auth.SigninRequestDto;
 import com.fadhli.auth_server.dto.auth.SignupRequestDto;
 import com.fadhli.auth_server.dto.auth.SignupResponseDto;
@@ -49,7 +50,7 @@ public class AuthService {
         long accessTokenExpiredAt = System.currentTimeMillis() / 1000 + (expiration / 1000);  // expiration is in milliseconds
 
         User user = userRepository.findByUsername(signinRequest.getUsername())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ResponseMessages.notFound("User")));
 
         String refreshToken = refreshTokenService.generateRefreshToken(user.getId());
 

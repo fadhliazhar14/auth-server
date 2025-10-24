@@ -6,6 +6,7 @@ import com.fadhli.auth_server.dto.common.PageResponseDto;
 import com.fadhli.auth_server.dto.user.UserMapper;
 import com.fadhli.auth_server.dto.user.UserRequestDto;
 import com.fadhli.auth_server.dto.user.UserResponseDto;
+import com.fadhli.auth_server.dto.user.UserUpdateRequestDto;
 import com.fadhli.auth_server.entity.User;
 import com.fadhli.auth_server.exception.ResourceNotFoundException;
 import com.fadhli.auth_server.repository.UserRepository;
@@ -55,19 +56,19 @@ public class UserService {
         );
     }
 
-    public UserResponseDto edit(Long id, UserRequestDto userRequest) {
+    public UserResponseDto edit(Long id, UserUpdateRequestDto userUpdateRequest) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ResponseMessages.notFound("User")));
 
         userValidationService
                 .validateUserUniqueness(
-                        userRequest.getUsername(),
-                        userRequest.getEmail(),
+                        userUpdateRequest.getUsername(),
+                        userUpdateRequest.getEmail(),
                         id
                 );
 
-        userRequest.setIsActive(user.getIsActive());
-        userMapper.updateFromDto(userRequest, user);
+
+        userMapper.updateFromDto(userUpdateRequest, user);
         User updatedUser = userRepository.save(user);
 
         return userMapper.toDto(updatedUser);

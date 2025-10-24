@@ -36,6 +36,13 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null));
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<?>> handleIllegalArgument(IllegalArgumentException ex, HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<?>> handleValidationErrors(
             MethodArgumentNotValidException ex, HttpServletRequest request) {
@@ -70,7 +77,8 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        "An unexpected error occurred", null));
+                        "An unexpected error occurred" + (ex.getMessage().isEmpty() ? "" : ": " + ex.getMessage()),
+                        null));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
@@ -82,5 +90,16 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(PasswordValidationException.class)
+    public ResponseEntity<ApiResponse<?>> handlePasswordValidation(PasswordValidationException ex) {
+        ApiResponse<?> response = ApiResponse.error(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                ex.getErrors()
+        );
+
+        return ResponseEntity.badRequest().body(response);
     }
 }

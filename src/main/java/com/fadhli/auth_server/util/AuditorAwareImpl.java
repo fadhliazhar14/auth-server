@@ -19,12 +19,12 @@ public class AuditorAwareImpl implements AuditorAware<Long> {
             return Optional.of(0L);
         }
 
-        try {
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
 
-            return Optional.of(userDetails.getId());
-        } catch (NumberFormatException e) {
-            return Optional.of(0L);
+        if (principal instanceof CustomUserDetails userDetails) {
+            return Optional.ofNullable(userDetails.getId());
         }
+
+        return Optional.of(0L);
     }
 }
