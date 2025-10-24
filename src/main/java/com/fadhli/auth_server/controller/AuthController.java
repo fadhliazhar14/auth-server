@@ -1,5 +1,6 @@
 package com.fadhli.auth_server.controller;
 
+import com.fadhli.auth_server.dto.auth.ResetPasswordRequestDto;
 import com.fadhli.auth_server.dto.auth.SigninRequestDto;
 import com.fadhli.auth_server.dto.auth.SignupRequestDto;
 import com.fadhli.auth_server.dto.auth.SignupResponseDto;
@@ -8,6 +9,7 @@ import com.fadhli.auth_server.dto.token.RefreshTokenRequestDto;
 import com.fadhli.auth_server.dto.token.RefreshTokenResponseDto;
 import com.fadhli.auth_server.entity.RefreshToken;
 import com.fadhli.auth_server.service.AuthService;
+import com.fadhli.auth_server.service.PasswordResetService;
 import com.fadhli.auth_server.service.RefreshTokenService;
 import com.fadhli.auth_server.util.ApiResponse;
 import jakarta.validation.Valid;
@@ -15,10 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -30,6 +29,7 @@ import java.net.URI;
 public class AuthController {
     private final AuthService authService;
     private final RefreshTokenService refreshTokenService;
+    private final PasswordResetService passwordResetService;
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<SignupResponseDto>> signup(@Valid @RequestBody SignupRequestDto signupRequest) {
@@ -58,6 +58,22 @@ public class AuthController {
         String newAccessToken = authService.generateNewAccessToken(currentRefreshToken.getUser().getUsername());
         RefreshTokenResponseDto response = refreshTokenService.generateNewRefreshToken(refreshTokenRequest.getRefreshToken());
         response.setAccessToken(newAccessToken);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiResponse<String>> forgotPassword(@RequestParam String email) {
+        passwordResetService.createPasswordResetToken(email);
+        ApiResponse<String> response = ApiResponse.success("Reset password link sent to email!", null);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse<String>> resetPassword(@RequestBody ResetPasswordRequestDto request) {
+        passwordResetService.resetPassword(request.getToken(), request.getNewPassword());
+        ApiResponse<String> response = ApiResponse.success("Password reset successfully!", null);
 
         return ResponseEntity.ok(response);
     }
