@@ -35,6 +35,10 @@ public class PasswordResetService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException(ResponseMessages.notFound("User")));
 
+        if (!user.getIsActive()) {
+            throw new RuntimeException("User is inactive. Please contact Administrator");
+        }
+
         // Invalidate existing tokens for this user
         invalidateExistingToken(user);
 
