@@ -3,7 +3,7 @@ package com.fadhli.auth_server.service;
 import com.fadhli.auth_server.dto.auth.SigninRequestDto;
 import com.fadhli.auth_server.dto.auth.SignupRequestDto;
 import com.fadhli.auth_server.dto.auth.SignupResponseDto;
-import com.fadhli.auth_server.dto.token.AccessTokenResponse;
+import com.fadhli.auth_server.dto.token.AccessTokenResponseDto;
 import com.fadhli.auth_server.dto.user.UserMapper;
 import com.fadhli.auth_server.entity.User;
 import com.fadhli.auth_server.exception.ResourceNotFoundException;
@@ -35,7 +35,7 @@ public class AuthService {
     private Long expiration;
 
     @Transactional
-    public AccessTokenResponse authenticate(SigninRequestDto signinRequest) {
+    public AccessTokenResponseDto authenticate(SigninRequestDto signinRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         signinRequest.getUsername(),
@@ -53,7 +53,7 @@ public class AuthService {
 
         String refreshToken = refreshTokenService.generateRefreshToken(user.getId());
 
-        return new AccessTokenResponse(
+        return new AccessTokenResponseDto(
                 jwt,
                 refreshToken,
                 "Bearer",

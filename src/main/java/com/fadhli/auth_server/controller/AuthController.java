@@ -3,9 +3,9 @@ package com.fadhli.auth_server.controller;
 import com.fadhli.auth_server.dto.auth.SigninRequestDto;
 import com.fadhli.auth_server.dto.auth.SignupRequestDto;
 import com.fadhli.auth_server.dto.auth.SignupResponseDto;
-import com.fadhli.auth_server.dto.token.AccessTokenResponse;
-import com.fadhli.auth_server.dto.token.RefreshTokenRequest;
-import com.fadhli.auth_server.dto.token.RefreshTokenResponse;
+import com.fadhli.auth_server.dto.token.AccessTokenResponseDto;
+import com.fadhli.auth_server.dto.token.RefreshTokenRequestDto;
+import com.fadhli.auth_server.dto.token.RefreshTokenResponseDto;
 import com.fadhli.auth_server.entity.RefreshToken;
 import com.fadhli.auth_server.service.AuthService;
 import com.fadhli.auth_server.service.RefreshTokenService;
@@ -46,17 +46,17 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<AccessTokenResponse> authenticateUser(@Valid @RequestBody SigninRequestDto signinRequest) {
-        AccessTokenResponse jwtResponse = authService.authenticate(signinRequest);
+    public ResponseEntity<AccessTokenResponseDto> authenticateUser(@Valid @RequestBody SigninRequestDto signinRequest) {
+        AccessTokenResponseDto jwtResponse = authService.authenticate(signinRequest);
 
         return ResponseEntity.ok(jwtResponse);
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<RefreshTokenResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+    public ResponseEntity<RefreshTokenResponseDto> refreshToken(@Valid @RequestBody RefreshTokenRequestDto refreshTokenRequest) {
         RefreshToken currentRefreshToken = refreshTokenService.findByToken(refreshTokenRequest.getRefreshToken());
         String newAccessToken = authService.generateNewAccessToken(currentRefreshToken.getUser().getUsername());
-        RefreshTokenResponse response = refreshTokenService.generateNewRefreshToken(refreshTokenRequest.getRefreshToken());
+        RefreshTokenResponseDto response = refreshTokenService.generateNewRefreshToken(refreshTokenRequest.getRefreshToken());
         response.setAccessToken(newAccessToken);
 
         return ResponseEntity.ok(response);

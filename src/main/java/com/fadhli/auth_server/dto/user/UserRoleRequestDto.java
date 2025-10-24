@@ -1,4 +1,4 @@
 package com.fadhli.auth_server.dto.user;
 
-public class UserRoleRequest {
+public class UserRoleRequestDto {
 }

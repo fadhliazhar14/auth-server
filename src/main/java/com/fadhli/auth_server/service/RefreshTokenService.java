@@ -1,7 +1,7 @@
 package com.fadhli.auth_server.service;
 
 import com.fadhli.auth_server.constant.ResponseMessages;
-import com.fadhli.auth_server.dto.token.RefreshTokenResponse;
+import com.fadhli.auth_server.dto.token.RefreshTokenResponseDto;
 import com.fadhli.auth_server.entity.RefreshToken;
 import com.fadhli.auth_server.exception.BusinessValidationException;
 import com.fadhli.auth_server.repository.RefreshTokenRepository;
@@ -37,14 +37,14 @@ public class RefreshTokenService {
         return refreshTokenRepository.save(refreshToken).getToken();
     }
 
-    public RefreshTokenResponse generateNewRefreshToken(String oldToken) {
+    public RefreshTokenResponseDto generateNewRefreshToken(String oldToken) {
         RefreshToken oldRefreshToken = refreshTokenRepository.findByToken(oldToken)
                 .orElseThrow(() -> new BusinessValidationException("Invalid refresh token"));
 
         verifyExpiration(oldRefreshToken);
 
         RefreshToken newRefreshToken = rotateRefreshToken(oldRefreshToken);
-        return new RefreshTokenResponse(
+        return new RefreshTokenResponseDto(
                 "",
                 newRefreshToken.getToken(),
                 newRefreshToken.getExpiresAt().getEpochSecond(),

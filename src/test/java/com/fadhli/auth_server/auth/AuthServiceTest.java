@@ -1,7 +1,7 @@
 package com.fadhli.auth_server.auth;
 
 import com.fadhli.auth_server.dto.auth.SigninRequestDto;
-import com.fadhli.auth_server.dto.token.AccessTokenResponse;
+import com.fadhli.auth_server.dto.token.AccessTokenResponseDto;
 import com.fadhli.auth_server.dto.user.UserMapper;
 import com.fadhli.auth_server.entity.User;
 import com.fadhli.auth_server.repository.UserRepository;
@@ -61,7 +61,7 @@ public class AuthServiceTest {
         when(userRepository.findByUsername("john")).thenReturn(Optional.of(new User()));
 
         // Act
-        AccessTokenResponse result = authService.authenticate(request);
+        AccessTokenResponseDto result = authService.authenticate(request);
 
         // Assert
         assertThat(result.getAccessToken()).isEqualTo("jwt-token");
