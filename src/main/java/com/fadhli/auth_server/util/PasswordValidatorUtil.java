@@ -5,7 +5,6 @@ import org.passay.*;
 import java.util.List;
 
 public class PasswordValidatorUtil {
-
     private static final PasswordValidator validator = new PasswordValidator(List.of(
             new LengthRule(8, 20),
             new CharacterRule(EnglishCharacterData.UpperCase, 1),
