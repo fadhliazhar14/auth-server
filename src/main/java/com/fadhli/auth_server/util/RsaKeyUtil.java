@@ -8,7 +8,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 public class RsaKeyUtil {
-
     public static KeyPair generateRsaKey() {
         try {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
