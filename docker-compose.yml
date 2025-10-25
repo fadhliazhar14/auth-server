@@ -15,6 +15,7 @@ services:
 
   auth-server:
     image: auth-server:latest
+    build: .
     container_name: auth-server
     restart: unless-stopped
     environment:
