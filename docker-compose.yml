@@ -25,7 +25,7 @@ services:
       MAIL_USERNAME: ${MAIL_USERNAME}
       MAIL_PASSWORD: ${MAIL_PASSWORD}
     ports:
-      - "8080:8080"
+      - "9000:9000"
     depends_on:
       - mysql
     networks:
