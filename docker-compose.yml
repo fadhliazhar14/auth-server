@@ -1,7 +1,7 @@
 services:
   mysql:
     image: mysql:latest
-    container_name: my-mysql
+    container_name: auth-server-mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-defaultrootpassword}
