@@ -4,7 +4,8 @@ services:
     container_name: my-mysql
     restart: unless-stopped
     environment:
-      DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-defaultrootpassword}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-defaultrootpassword}
+      MYSQL_DATABASE: auth_server
     ports:
       - "3306:3306"
     volumes:
