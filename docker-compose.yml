@@ -1,0 +1,37 @@
+services:
+  mysql:
+    image: mysql:latest
+    container_name: my-mysql
+    restart: unless-stopped
+    environment:
+      DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-defaultrootpassword}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - database_network
+
+  auth-server:
+    image: auth-server:latest
+    container_name: auth-server
+    restart: unless-stopped
+    environment:
+      DATASOURCE_URL: ${DATASOURCE_URL}
+      DATASOURCE_USERNAME: ${DATASOURCE_USERNAME}
+      DATASOURCE_PASSWORD: ${DATASOURCE_PASSWORD}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - database_network
+
+volumes:
+  mysql_data:
+
+networks:
+  database_network:
+    driver: bridge
