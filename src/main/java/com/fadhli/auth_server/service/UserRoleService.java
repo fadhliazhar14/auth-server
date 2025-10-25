@@ -1,6 +1,7 @@
 package com.fadhli.auth_server.service;
 
 import com.fadhli.auth_server.constant.ResponseMessages;
+import com.fadhli.auth_server.dto.user.UserResponseDto;
 import com.fadhli.auth_server.dto.user_role.UserRoleRequestDto;
 import com.fadhli.auth_server.dto.user_role.UserRoleResponseDto;
 import com.fadhli.auth_server.entity.Role;
@@ -105,12 +106,12 @@ public class UserRoleService {
 
     @Transactional
     public String revokeRoleFromUser(Long userId, Long roleId) {
-        userService.findById(userId);
+        UserResponseDto user = userService.findById(userId);
 
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new ResourceNotFoundException(ResponseMessages.notFound("Role")));
 
-        userRoleRepository.findByRoleId(roleId)
+        userRoleRepository.findByUserIdAndRoleId(user.getId(), roleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Role: " + role.getName() + " is not assigned yet"));
 
         userRoleRepository.deleteByRoleId(roleId);
