@@ -1,0 +1,37 @@
+code review sama chatgpt/qwen :
+1. JwksService.java
+2. JwtService.java
+3. JwkController.java
+4. AuthService.java
+5. RsaKeyUtil.java
+6. CustomUserDetailsService.java
+7. AuditorAwareImpl.java
+8. EmailService.java
+9. PasswordResetService.java
+
+1. pelajari alur custom jwt auth
+2. pelajari anotasi post construct di JwtService
+3. pelajari testing
+4. pelajari logging
+
+
+1. Apakah mekanisme JWT authentication dan manajemen kunci asimetris di aplikasi ini sudah efisien, mengadopsi best practice dan umum dilakukan?
+2. Bagaimana service lain melakukan verifikasi jwt yang diterbitkan dari aplikasi auth-server ini? Kemudian bagaimana agar service lain secara efisien dan tidak menimbulkan traffic yang tinggi ke auth-server ketika melakukan verifikasi JWT?
+3. Apakah nilai di kolom private_key_pem di entity jwks_key sudah benar? Setau saya format PEM tidak seperti itu
+
+
+whats next for auth server?
+1. tambahin caching mechanism
+2. tambahin rate limiting
+3. logging
+4. change password user + password compliance
+5. forgot password + email reset password V
+6. tambahin pagination V
+	- user V
+	- role V
+7. tambahin cors config V
+8. tambahin testing
+
+set MAIL_USERNAME=fadhliazhar44@gmail.com
+set MAIL_PASSWORD="bxac bjms azvq itxd"
+set MAIL_PASSWORD=bxac^ bjms^ azvq^ itxd
