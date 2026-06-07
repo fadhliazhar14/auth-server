@@ -14,7 +14,9 @@ import com.fadhli.auth_server.service.RefreshTokenService;
 import com.fadhli.auth_server.util.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -48,8 +50,18 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<AccessTokenResponseDto> authenticateUser(@Valid @RequestBody SigninRequestDto signinRequest) {
         AccessTokenResponseDto jwtResponse = authService.authenticate(signinRequest);
+        String token = jwtResponse.getAccessToken();
+        ResponseCookie cookie = ResponseCookie.from("JWT_TOKEN", token)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(24 * 60 * 60)
+                .sameSite("Lax")
+                .build();
 
-        return ResponseEntity.ok(jwtResponse);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(jwtResponse);
     }
 
     @PostMapping("/refresh-token")
