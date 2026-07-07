@@ -1,7 +1,7 @@
 package com.fadhli.auth_server.service;
 
 import com.fadhli.auth_server.constant.ResponseMessages;
-import com.fadhli.auth_server.dto.token.RefreshTokenResponseDto;
+import com.fadhli.auth_server.dto.token.RefreshTokenDto;
 import com.fadhli.auth_server.entity.RefreshToken;
 import com.fadhli.auth_server.exception.BusinessValidationException;
 import com.fadhli.auth_server.repository.RefreshTokenRepository;
@@ -24,7 +24,7 @@ public class RefreshTokenService {
     @Value("${jwt.refresh-expiration}")
     private long refreshTokenExpirationInMilis;
 
-    public String generateRefreshToken(Long userId) {
+    public String generate(Long userId) {
         // Delete expired refresh token
         refreshTokenRepository.deleteByUserId(userId);
 
@@ -37,14 +37,14 @@ public class RefreshTokenService {
         return refreshTokenRepository.save(refreshToken).getToken();
     }
 
-    public RefreshTokenResponseDto generateNewRefreshToken(String oldToken) {
+    public RefreshTokenDto generateNew(String oldToken) {
         RefreshToken oldRefreshToken = refreshTokenRepository.findByToken(oldToken)
                 .orElseThrow(() -> new BusinessValidationException("Invalid refresh token"));
 
         verifyExpiration(oldRefreshToken);
 
-        RefreshToken newRefreshToken = rotateRefreshToken(oldRefreshToken);
-        return new RefreshTokenResponseDto(
+        RefreshToken newRefreshToken = rotate(oldRefreshToken);
+        return new RefreshTokenDto(
                 "",
                 newRefreshToken.getToken(),
                 newRefreshToken.getExpiresAt().getEpochSecond(),
@@ -66,10 +66,16 @@ public class RefreshTokenService {
     }
 
     @Transactional
-    private RefreshToken rotateRefreshToken(RefreshToken oldToken) {
+    private RefreshToken rotate(RefreshToken oldToken) {
         oldToken.setToken(UUID.randomUUID().toString());
         oldToken.setExpiresAt(Instant.now().plusMillis(refreshTokenExpirationInMilis));
 
         return refreshTokenRepository.save(oldToken);
+    }
+
+    @Transactional
+    public void revoke(String token) {
+        refreshTokenRepository.findByToken(token)
+                .ifPresent(refreshTokenRepository::delete);
     }
 }
