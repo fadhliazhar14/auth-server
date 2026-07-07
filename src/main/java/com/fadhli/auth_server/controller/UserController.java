@@ -85,6 +85,14 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PatchMapping("/{id}/reactivate")
+    public ResponseEntity<ApiResponse<UserResponseDto>> reactivate(@PathVariable Long id) {
+        UserResponseDto reactivatedUser = userService.reactivate(id);
+        ApiResponse<UserResponseDto> response = ApiResponse.success(ResponseMessages.updated("User status"), reactivatedUser);
+
+        return ResponseEntity.ok(response);
+    }
+
     /*--- USER ROLES ---*/
     @GetMapping("/{id}/roles")
     public ResponseEntity<ApiResponse<UserRoleResponseDto>> getUserRoles(@PathVariable Long id) {
