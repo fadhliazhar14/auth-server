@@ -82,4 +82,18 @@ public class UserService {
 
         userRepository.save(user);
     }
+
+    public UserResponseDto reactivate(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(ResponseMessages.notFound("User")));
+
+        if (user.getIsActive() != null && user.getIsActive()) {
+            return userMapper.toDto(user);
+        }
+
+        user.setIsActive(true);
+        User updatedUser = userRepository.save(user);
+
+        return userMapper.toDto(updatedUser);
+    }
 }
