@@ -28,7 +28,7 @@ public class User extends BaseEntity {
     @Column
     private String email;
 
-    @Column(name = "password_hash", nullable = false)
+    @Column(name = "password_hash")
     private String passwordHash;
 
     @Column(name = "is_active", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")

@@ -37,7 +37,7 @@ public class UserController {
             @RequestParam(defaultValue = "id") String sort,
             @RequestParam(defaultValue = "desc") String direction,
             @RequestParam(required = false) String search
-    ) {
+    ) throws InterruptedException {
         PageRequestDto pageRequest = new PageRequestDto(page, size, sort, direction, search);
         PageResponseDto<UserResponseDto> users = userService.findAll(pageRequest);
         ApiResponse<PageResponseDto<UserResponseDto>> response = ApiResponse.success(ResponseMessages.SUCCESS, users);
@@ -70,7 +70,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<UserResponseDto>> update(
             @PathVariable Long id,
-            @Valid @RequestBody UserUpdateRequestDto userRequest) {
+            @Valid @RequestBody UserUpdateRequestDto userRequest) throws InterruptedException{
         UserResponseDto users = userService.edit(id, userRequest);
         ApiResponse<UserResponseDto> response = ApiResponse.success(ResponseMessages.updated("User"), users);
 

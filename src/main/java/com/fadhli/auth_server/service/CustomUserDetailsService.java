@@ -7,7 +7,6 @@ import com.fadhli.auth_server.entity.UserRole;
 import com.fadhli.auth_server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsernameWithActiveRoles(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
@@ -36,6 +35,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new CustomUserDetails(
                 user.getId(),
                 user.getUsername(),
+                user.getName(),
+                user.getEmail(),
                 user.getPasswordHash(),
                 authorities
         );

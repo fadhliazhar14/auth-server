@@ -1,5 +1,6 @@
 package com.fadhli.auth_server.service;
 
+import com.fadhli.auth_server.entity.CustomUserDetails;
 import com.fadhli.auth_server.entity.JwksKey;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -40,24 +41,26 @@ public class JwtService {
         }
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(CustomUserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("name", userDetails.getName());
+        claims.put("email", userDetails.getEmail());
+        claims.put("roles", userDetails.getAuthorities().toString());
 
-        return createToken(claims, userDetails.getUsername(), userDetails.getAuthorities().toString());
+        return createToken(claims, userDetails.getUsername());
     }
 
-    private String createToken(Map<String, Object> claims, String subject, String roles) {
+    private String createToken(Map<String, Object> claims, String subject) {
         JwksKey jwksKey = jwksService.findActiveJwksKey();
         PrivateKey signingKey = jwksService.findActivePrivateKey();
 
         return Jwts.builder()
                 .setHeaderParam("kid", jwksKey.getKid())
-                .setClaims(claims)
                 .setIssuer(tokenIssuer)
                 .setSubject(subject)
-                .claim("roles", roles)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .addClaims(claims)
                 .signWith(signingKey, SignatureAlgorithm.RS256)
                 .compact();
     }
